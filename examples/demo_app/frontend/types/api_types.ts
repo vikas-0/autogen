@@ -19,13 +19,13 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/' }),
   endpoints: (build) => ({
     usersIndex: build.query<UsersIndexResponse, UsersIndexRequest>({
-      query: (params) => ({ url: '/api/users(.:format)', method: 'GET', params })
+      query: (params) => ({ url: '/api/users', method: 'GET', params })
     }),
           usersCreate: build.mutation<UsersCreateResponse, UsersCreateRequest>({
-      query: (body) => ({ url: '/api/users(.:format)', method: 'POST', body })
+      query: (body) => ({ url: '/api/users', method: 'POST', body })
     }),
           usersShow: build.query<UsersShowResponse, UsersShowRequest>({
-      query: (params) => ({ url: '/api/users/:id(.:format)', method: 'GET', params })
+      query: (params) => ({ url: '/api/users/:id', method: 'GET', params })
     })
   })
 })

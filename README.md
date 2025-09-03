@@ -70,7 +70,7 @@ end
 typed :update, params: { tags: [:string], profile: { age: :integer } }, returns: { ok: :boolean }
 ```
 
-### Sorbet-based types (optional)
+### Sorbet-based types (optional & experimental)
 
 Declare request/response DTOs as `T::Struct`s using this naming convention:
 
@@ -155,6 +155,5 @@ Emits a small RTK API with endpoints and exported hooks. You can copy/paste or a
 - No static analysis of `params.permit` or controller `render json:` yet.
 - Sorbet integration uses `T::Struct` DTOs (not method `sig` annotations).
 - Nested payload preference (e.g., `{ user: { ... } }`) is best expressed via DSL or a nested T::Struct.
-- Route paths may include `(.:format)` in generated code; you can strip/normalize downstream.
 
 PRs and feedback welcome!

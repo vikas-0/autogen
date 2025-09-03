@@ -5,7 +5,7 @@
     "version": "0.1.0"
   },
   "paths": {
-    "/api/users(.:format)": {
+    "/api/users": {
       "get": {
         "operationId": "UsersIndex",
         "responses": {
@@ -117,7 +117,7 @@
         }
       }
     },
-    "/api/users/:id(.:format)": {
+    "/api/users/:id": {
       "get": {
         "operationId": "UsersShow",
         "responses": {

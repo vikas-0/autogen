@@ -143,7 +143,7 @@ module RailsTypedApi
           action: entry.action,
           name: entry.name || default_operation_name(entry.controller, entry.action),
           verb: route[:verb],
-          path: route[:path],
+          path: normalize_path(route[:path]),
           params_schema: entry.params_schema,
           response_schema: entry.response_schema,
           explicit: entry.explicit
@@ -153,6 +153,11 @@ module RailsTypedApi
       def default_operation_name(controller, action)
         ctrl = controller.to_s.split("::").last.sub(/Controller\z/, "")
         "#{ctrl}#{action.camelize}"
+      end
+
+      def normalize_path(path)
+        p = path.to_s
+        p.sub(/\(\.\:format\)\z/, "")
       end
     end
   end
