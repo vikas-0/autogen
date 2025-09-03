@@ -5,3 +5,6 @@
 *.gem
 Gemfile.lock
 .DS_Store
+
+# Node
+**/node_modules/
