@@ -45,5 +45,4 @@ group :development, :test do
 end
 
 # Local gem: rails_typed_api
-gem "rails_typed_api", path: "/Users/vikask9/Development/experiment/autogen/CascadeProjects/autogen"
-
+gem "rails_typed_api", path: "../../"
