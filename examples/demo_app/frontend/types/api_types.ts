@@ -13,6 +13,34 @@ export interface UsersShowRequest { id: number; }
 
 export interface UsersShowResponse { id: number; name: string; email: string; created_at: string; }
 
+export interface ProjectsSummaryRequest { id: number; }
+
+export interface ProjectsSummaryResponse { id: number; name: string; summary: string; }
+
+export interface ProjectsArchiveRequest { id: number; }
+
+export interface ProjectsArchiveResponse { ok: boolean; }
+
+export interface ProjectsSearchRequest { q?: string; }
+
+export type ProjectsSearchResponse = { id: number; name: string; }[];
+
+export interface ReleasesDeployRequest { project_id: number; id: number; }
+
+export interface ReleasesDeployResponse { ok: boolean; release_id: number; }
+
+export type MetricsUptimeRequest = undefined;
+
+export interface MetricsUptimeResponse { status: string; uptime_seconds: number; }
+
+export interface ReportsMonthlyRequest { year: number; month: number; }
+
+export interface ReportsMonthlyResponse { year: number; month: number; total: number; }
+
+export interface ReportsRunRequest { kind?: string; }
+
+export interface ReportsRunResponse { job_id: string; }
+
 // Basic RTK Query API (experimental)
 export const api = createApi({
   reducerPath: 'api',
@@ -26,8 +54,29 @@ export const api = createApi({
     }),
           usersShow: build.query<UsersShowResponse, UsersShowRequest>({
       query: (params) => ({ url: `/api/users/${params.id}`, method: 'GET' })
+    }),
+          projectsSummary: build.query<ProjectsSummaryResponse, ProjectsSummaryRequest>({
+      query: (params) => ({ url: `/api/projects/${params.id}/summary`, method: 'GET' })
+    }),
+          projectsArchive: build.mutation<ProjectsArchiveResponse, ProjectsArchiveRequest>({
+      query: (body) => ({ url: `/api/projects/${body.id}/archive`, method: 'POST', body })
+    }),
+          projectsSearch: build.query<ProjectsSearchResponse, ProjectsSearchRequest>({
+      query: (params) => ({ url: '/api/projects/search', method: 'GET', params })
+    }),
+          releasesDeploy: build.mutation<ReleasesDeployResponse, ReleasesDeployRequest>({
+      query: (body) => ({ url: `/api/projects/${body.project_id}/releases/${body.id}/deploy`, method: 'POST', body })
+    }),
+          metricsUptime: build.query<MetricsUptimeResponse, MetricsUptimeRequest>({
+      query: (params) => ({ url: '/api/admin/metrics/uptime', method: 'GET', params })
+    }),
+          reportsMonthly: build.query<ReportsMonthlyResponse, ReportsMonthlyRequest>({
+      query: (params) => ({ url: `/api/reports/${params.year}/${params.month}`, method: 'GET' })
+    }),
+          reportsRun: build.mutation<ReportsRunResponse, ReportsRunRequest>({
+      query: (body) => ({ url: '/api/reports/run', method: 'POST', body })
     })
   })
 })
 
-export const { useUsersIndexQuery, useUsersCreateMutation, useUsersShowQuery } = api
+export const { useUsersIndexQuery, useUsersCreateMutation, useUsersShowQuery, useProjectsSummaryQuery, useProjectsArchiveMutation, useProjectsSearchQuery, useReleasesDeployMutation, useMetricsUptimeQuery, useReportsMonthlyQuery, useReportsRunMutation } = api

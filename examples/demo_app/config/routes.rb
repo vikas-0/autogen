@@ -10,5 +10,35 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :users, only: [:index, :show, :create]
+
+    # Router-only: projects with custom member/collection actions and nested releases
+    resources :projects, only: [] do
+      member do
+        get :summary
+        post :archive
+      end
+      collection do
+        get :search
+      end
+
+      resources :releases, only: [] do
+        member do
+          post :deploy
+        end
+      end
+    end
+
+    # Namespaced admin controller with collection route
+    namespace :admin do
+      resources :metrics, only: [] do
+        collection do
+          get :uptime
+        end
+      end
+    end
+
+    # Standalone custom routes for reports
+    get "reports/:year/:month", to: "reports#monthly"
+    post "reports/run", to: "reports#run"
   end
 end
