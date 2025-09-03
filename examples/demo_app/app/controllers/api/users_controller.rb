@@ -11,6 +11,10 @@ class Api::UsersController < ApplicationController
     render json: users
   end
 
+  typed :show,
+        params: { id: :integer },
+        returns: { id: :integer, name: :string, email: :string, created_at: :datetime }
+
   def show
     user = User.find(params[:id])
     render json: user

@@ -9,9 +9,9 @@ export interface UsersCreateRequest { user: { name: string; email: string; }; }
 
 export interface UsersCreateResponse { id: number; name: string; email: string; created_at: string; }
 
-export type UsersShowRequest = undefined;
+export interface UsersShowRequest { id: string; }
 
-export interface UsersShowResponse { id: number; name: string; email: string; created_at: string; updated_at: string; }
+export interface UsersShowResponse { id: number; name: string; email: string; created_at: string; }
 
 // Basic RTK Query API (experimental)
 export const api = createApi({
@@ -25,7 +25,7 @@ export const api = createApi({
       query: (body) => ({ url: '/api/users', method: 'POST', body })
     }),
           usersShow: build.query<UsersShowResponse, UsersShowRequest>({
-      query: (params) => ({ url: '/api/users/:id', method: 'GET', params })
+      query: (params) => ({ url: `/api/users/${params.id}`, method: 'GET' })
     })
   })
 })

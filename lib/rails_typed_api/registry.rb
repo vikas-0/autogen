@@ -157,7 +157,8 @@ module RailsTypedApi
 
       def normalize_path(path)
         p = path.to_s
-        p.sub(/\(\.\:format\)\z/, "")
+        p = p.sub(/\(\.\:format\)\z/, "")
+        p.gsub(/:([A-Za-z_][A-Za-z0-9_]*)/, '{\1}')
       end
     end
   end

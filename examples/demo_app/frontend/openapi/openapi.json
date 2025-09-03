@@ -117,7 +117,17 @@
         }
       }
     },
-    "/api/users/:id": {
+    "/api/users/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "get": {
         "operationId": "UsersShow",
         "responses": {
@@ -140,18 +150,13 @@
                     "created_at": {
                       "type": "string",
                       "format": "date-time"
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time"
                     }
                   },
                   "required": [
                     "id",
                     "name",
                     "email",
-                    "created_at",
-                    "updated_at"
+                    "created_at"
                   ]
                 }
               }
