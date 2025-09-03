@@ -25,6 +25,10 @@ module RailsTypedApi
         @entries.dup
       end
 
+      def reset!
+        @entries.clear
+      end
+
       # Build endpoints by integrating routes and filling in inference for missing ones
       def build_endpoints
         routes = collect_routes
@@ -85,7 +89,8 @@ module RailsTypedApi
         else
           route.verb.to_s
         end
-      rescue
+      rescue StandardError => e
+        Utils.log_debug("verb_for_route failed", e)
         "GET"
       end
 
@@ -95,7 +100,8 @@ module RailsTypedApi
         else
           route.path.to_s
         end
-      rescue
+      rescue StandardError => e
+        Utils.log_debug("path_for_route failed", e)
         "/"
       end
 
@@ -125,6 +131,9 @@ module RailsTypedApi
 
         Entry.new(controller: controller_name, action: action.to_s, params_schema: params_schema, response_schema: response_schema, explicit: false, name: nil)
       rescue NameError
+        nil
+      rescue StandardError => e
+        Utils.log_debug("infer_entry failed for #{controller_name}##{action}", e)
         nil
       end
 
@@ -156,9 +165,7 @@ module RailsTypedApi
       end
 
       def normalize_path(path)
-        p = path.to_s
-        p = p.sub(/\(\.\:format\)\z/, "")
-        p.gsub(/:([A-Za-z_][A-Za-z0-9_]*)/, '{\1}')
+        Utils.normalize_path(path)
       end
     end
   end

@@ -10,6 +10,11 @@ module RailsTypedApi
       end
     end
 
+    config.to_prepare do
+      # Clear registered entries on each reload in development to avoid stale state
+      RailsTypedApi::Registry.reset! if Rails.env.development?
+    end
+
     rake_tasks do
       load File.expand_path("../tasks/typed.rake", __dir__)
     end

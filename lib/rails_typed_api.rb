@@ -3,6 +3,7 @@
 require "rails_typed_api/version"
 require "rails_typed_api/config"
 require "rails_typed_api/types"
+require "rails_typed_api/utils"
 require "rails_typed_api/registry"
 require "rails_typed_api/dsl"
 require "rails_typed_api/ts_generator"
