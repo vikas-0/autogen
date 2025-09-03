@@ -43,7 +43,12 @@ module RailsTypedApi
       when Array
         "#{ts_type(node.first)}[]"
       when Hash
-        inner = node.map { |k, v| "#{k}: #{ts_type(v)};" }.join(" ")
+        inner = node.map do |k, v|
+          key = k.to_s
+          optional = key.end_with?("?")
+          name = optional ? key[0..-2] : key
+          "#{name}#{optional ? '?' : ''}: #{ts_type(v)};"
+        end.join(" ")
         "{ #{inner} }"
       else
         "any"
@@ -57,11 +62,16 @@ module RailsTypedApi
       when Array
         { type: "array", items: json_schema(node.first) }
       when Hash
-        {
-          type: "object",
-          properties: node.transform_values { |v| json_schema(v) },
-          required: node.keys
-        }
+        props = {}
+        required = []
+        node.each do |k, v|
+          key = k.to_s
+          optional = key.end_with?("?")
+          name = optional ? key[0..-2] : key
+          props[name] = json_schema(v)
+          required << name unless optional
+        end
+        { type: "object", properties: props, required: required }
       else
         { type: "string" }
       end
