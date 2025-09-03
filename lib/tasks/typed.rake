@@ -12,6 +12,9 @@ namespace :typed do
     controller_filter = controller_opt&.split("=", 2)&.last || ENV["CONTROLLER"]
     controller_list = controller_filter&.split(",")&.map { |s| s.strip }&.reject(&:empty?)
 
+    # Consume known flags from ARGV so they don't leak to other tasks
+    ARGV.delete_if { |a| a == "--openapi" || a == "--rtk" || a.start_with?("--controller=") }
+
     # Eager load the app so that controllers/classes defining `typed` are loaded
     Rails.application.eager_load!
 
