@@ -25,7 +25,7 @@ module RailsTypedApi
       @endpoints.each do |ep|
         req_iface = interface_name(ep, :Request)
         res_iface = interface_name(ep, :Response)
-        path_params = extract_path_params(ep[:path])
+        path_params = RailsTypedApi::Utils.extract_path_params(ep[:path])
 
         if ep[:params_schema]
           ts = RailsTypedApi::Types.ts_type(ep[:params_schema])
@@ -97,30 +97,22 @@ module RailsTypedApi
         res_iface = interface_name(ep, :Response)
         method = (ep[:verb].to_s.split("|").first || "GET").downcase
         key = endpoint_key(ep)
-        path_params = extract_path_params(ep[:path])
+        path_params = RailsTypedApi::Utils.extract_path_params(ep[:path])
+        is_get_delete = %w[get delete].include?(method)
         url_expr = if path_params.any?
-          if %w[get delete].include?(method)
-            template = ep[:path].gsub(/\{([A-Za-z_][A-Za-z0-9_]*)\}/, '${params.\\1}')
-            "`#{template}`"
-          else
-            template = ep[:path].gsub(/\{([A-Za-z_][A-Za-z0-9_]*)\}/, '${body.\\1}')
-            "`#{template}`"
+          template = ep[:path].gsub(/\{([A-Za-z_][A-Za-z0-9_]*)\}/) do
+            name = Regexp.last_match(1)
+            "${#{is_get_delete ? "params" : "body"}.#{name}}"
           end
+          "`#{template}`"
         else
           "'#{ep[:path]}'"
         end
-        query_line = if %w[get delete].include?(method)
-          if path_params.any?
-            "query: (params) => ({ url: #{url_expr}, method: '#{method.upcase}' })"
-          else
-            "query: (params) => ({ url: #{url_expr}, method: '#{method.upcase}', params })"
-          end
+        query_line = if is_get_delete
+          path_params.any? ? "query: (params) => ({ url: #{url_expr}, method: '#{method.upcase}' })"
+                           : "query: (params) => ({ url: #{url_expr}, method: '#{method.upcase}', params })"
         else
-          if path_params.any?
-            "query: (body) => ({ url: #{url_expr}, method: '#{method.upcase}', body })"
-          else
-            "query: (body) => ({ url: #{url_expr}, method: '#{method.upcase}', body })"
-          end
+          "query: (body) => ({ url: #{url_expr}, method: '#{method.upcase}', body })"
         end
         kind = method == 'get' ? 'query' : 'mutation'
         <<~TS.strip
@@ -145,8 +137,5 @@ module RailsTypedApi
       end
     end
 
-    def extract_path_params(path)
-      (path.to_s.scan(/\{([A-Za-z_][A-Za-z0-9_]*)\}/).flatten.map(&:to_s))
-    end
   end
 end

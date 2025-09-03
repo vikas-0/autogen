@@ -9,7 +9,7 @@ export interface UsersCreateRequest { user: { name: string; email: string; }; }
 
 export interface UsersCreateResponse { id: number; name: string; email: string; created_at: string; }
 
-export interface UsersShowRequest { id: string; }
+export interface UsersShowRequest { id: number; }
 
 export interface UsersShowResponse { id: number; name: string; email: string; created_at: string; }
 
