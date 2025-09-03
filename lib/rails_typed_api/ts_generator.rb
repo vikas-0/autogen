@@ -23,8 +23,8 @@ module RailsTypedApi
       end
       lines << ""
       @endpoints.each do |ep|
-        req_iface = interface_name(ep, :Request)
-        res_iface = interface_name(ep, :Response)
+        req_iface = "#{RailsTypedApi::NameUtils.interface_base_name(ep)}Request"
+        res_iface = "#{RailsTypedApi::NameUtils.interface_base_name(ep)}Response"
         path_params = RailsTypedApi::Utils.extract_path_params(ep[:path])
 
         if ep[:params_schema]
@@ -67,8 +67,8 @@ module RailsTypedApi
     private
 
     def interface_name(ep, suffix)
-      base = ep[:name] || (ep[:controller].to_s.split("::").last.sub(/Controller\z/, "") + ep[:action].to_s.camelize)
-      base.gsub!(/[^A-Za-z0-9]/, "")
+      # Deprecated: retained for backward compatibility; prefer NameUtils
+      base = RailsTypedApi::NameUtils.interface_base_name(ep)
       "#{base}#{suffix}"
     end
 
@@ -96,7 +96,7 @@ module RailsTypedApi
         req_iface = interface_name(ep, :Request)
         res_iface = interface_name(ep, :Response)
         method = (ep[:verb].to_s.split("|").first || "GET").downcase
-        key = endpoint_key(ep)
+        key = RailsTypedApi::NameUtils.endpoint_key(ep)
         path_params = RailsTypedApi::Utils.extract_path_params(ep[:path])
         is_get_delete = %w[get delete].include?(method)
         url_expr = if path_params.any?
@@ -124,9 +124,7 @@ module RailsTypedApi
     end
 
     def endpoint_key(ep)
-      base = ep[:name] || (ep[:controller].to_s.split("::").last.sub(/Controller\z/, "") + "_" + ep[:action].to_s)
-      base = base.gsub(/[^A-Za-z0-9]+/, '_').underscore
-      base.camelize(:lower)
+      RailsTypedApi::NameUtils.endpoint_key(ep)
     end
 
     def rtk_hooks

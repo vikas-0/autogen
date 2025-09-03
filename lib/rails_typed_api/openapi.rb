@@ -32,7 +32,7 @@ module RailsTypedApi
           end
         end
         paths[path][verb] = {
-          operationId: ep[:name] || default_operation_id(ep),
+          operationId: ep[:name] || RailsTypedApi::NameUtils.operation_name(ep[:controller], ep[:action]),
           requestBody: request_body_for(verb, ep[:params_schema]),
           responses: {
             "200" => {
@@ -47,11 +47,6 @@ module RailsTypedApi
         }.compact
       end
       paths
-    end
-
-    def default_operation_id(ep)
-      ctrl = ep[:controller].to_s.split("::").last.sub(/Controller\z/, "")
-      "#{ctrl}#{ep[:action].to_s.camelize}"
     end
 
     def build_path_parameters(ep)
